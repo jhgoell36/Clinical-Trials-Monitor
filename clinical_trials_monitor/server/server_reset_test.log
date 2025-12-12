@@ -1,0 +1,8 @@
+Server running on port 3000 
+Scheduler started: Hourly checks 5am-10pm ET.
+Reset email sent: <96cd3201-189b-0931-a718-dfcccdc0c5ef@example.com>
+Starting sponsor check... (Target: Immunovant Sciences GmbH)
+Checking sponsor: Immunovant Sciences GmbH
+Finished Immunovant Sciences GmbH. Found 0 new trials.
+Sponsor check complete. Found 18 total new trials.
+Reset email sent: <f4719c77-1dc8-b735-faaf-4c315f9865ef@example.com>
