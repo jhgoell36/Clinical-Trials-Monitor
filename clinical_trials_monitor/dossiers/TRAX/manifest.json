@@ -1,0 +1,66 @@
+{
+  "ticker": "TRAX",
+  "cik": 2091349,
+  "generatedUtc": "2026-05-16",
+  "demoRun": true,
+  "demoNote": "Compiled in a network-restricted container (data.sec.gov / EuropePMC / ClinicalTrials.gov / company sites return 403). URLs below are the exact sources the generator downloads when run with network access. See _FETCH_NOTES.md.",
+  "company": {
+    "name": "First Tracks Biotherapeutics, Inc.",
+    "cik": 2091349,
+    "fileNumber": "001-43177",
+    "tickers": ["TRAX", "TRAXV"],
+    "exchanges": ["Nasdaq Global Select Market"],
+    "sic": "2834",
+    "sicDescription": "Pharmaceutical Preparations",
+    "stateOfIncorporation": "DE",
+    "fiscalYearEnd": "1231",
+    "ein": "395003207",
+    "website": "https://www.firsttracksbio.com",
+    "headquarters": "San Diego, California",
+    "ceo": "Daniel Faga",
+    "parent": {"name": "AnaptysBio, Inc.", "ticker": "ANAB", "cik": 1370053},
+    "formerNames": [
+      {"name": "Biopharma Co., Inc.", "from": "2019", "to": "2026-02"}
+    ]
+  },
+  "counts": {
+    "filings": 6,
+    "filingsDownloaded": 0,
+    "presentations": 5,
+    "studies": 3,
+    "literature": 5
+  },
+  "filings": [
+    {"form": "10-12B", "purpose": "Spin-off registration statement (effective 2026-04-01)", "indexUrl": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002091349&type=10-12B", "status": "source-only"},
+    {"form": "8-K", "accession": "0001193125-26-088399", "indexUrl": "https://www.sec.gov/Archives/edgar/data/2091349/000119312526088399/0001193125-26-088399-index.htm", "status": "source-only"},
+    {"form": "S-1", "purpose": "Resale registration ~10.5M shares", "indexUrl": "https://www.stocktitan.net/sec-filings/TRAX/s-1-first-tracks-biotherapeutics-inc-files-ipo-registration-statement-0ee262a04dcc.html", "status": "source-only"},
+    {"form": "10-Q", "purpose": "Q1 2026 standalone quarterly report", "indexUrl": "https://www.stocktitan.net/sec-filings/TRAX/10-q-first-tracks-biotherapeutics-inc-quarterly-earnings-report-e303d9218462.html", "status": "source-only"},
+    {"form": "3/4", "purpose": "Insider ownership", "indexUrl": "https://www.stocktitan.net/sec-filings/TRAXV/form-4-first-tracks-biotherapeutics-inc-insider-trading-activity-9bb67b27d017.html", "status": "source-only"},
+    {"form": "8-K (AnaptysBio parent)", "indexUrl": "https://www.sec.gov/Archives/edgar/data/1370053/000119312526164330/d120122d8k.htm", "status": "source-only"}
+  ],
+  "presentations": [
+    {"title": "First Tracks Biotherapeutics — corporate site", "url": "https://www.firsttracksbio.com/", "status": "source-only"},
+    {"title": "Nasdaq debut & business update (2026-04-20)", "url": "https://www.globenewswire.com/news-release/2026/04/20/3277118/0/en/first-tracks-biotherapeutics-debuts-on-nasdaq-to-advance-therapies-for-autoimmune-diseases.html", "status": "source-only"},
+    {"title": "ANB033 CD122 investor-event overview (2025-09-29)", "url": "https://www.globenewswire.com/news-release/2025/09/29/3158109/0/en/Anaptys-to-Provide-Overview-of-ANB033-a-CD122-antagonist-at-Virtual-Investor-Event-on-Tuesday-Oct-14.html", "status": "source-only"},
+    {"title": "Q1 2026 financial results & business update", "url": "https://www.biospace.com/press-releases/first-tracks-biotherapeutics-announces-first-quarter-2026-financial-results-and-provides-business-update", "status": "source-only"},
+    {"title": "Rosnilimab RA Phase 2b — ACR 2025 poster/abstract", "url": "https://acrabstracts.org/abstract/rosnilimab-a-selective-and-potent-depleter-of-pathogenic-t-cells-demonstrates-efficacy-safety-and-translational-proof-of-mechanism-in-a-rheumatoid-arthritis-phase-2b-trial/", "status": "source-only"}
+  ],
+  "studies": [
+    {"nctId": "NCT06041269", "title": "RENOIR — Rosnilimab in Moderate-to-Severe Rheumatoid Arthritis", "phase": "PHASE2", "status": "COMPLETED", "url": "https://clinicaltrials.gov/study/NCT06041269"},
+    {"nctId": "", "title": "ANB033 Phase 1b — celiac disease & eosinophilic esophagitis", "phase": "PHASE1", "status": "ONGOING", "url": "https://www.firsttracksbio.com/"},
+    {"nctId": "", "title": "ANB101 Phase 1a — BDCA2 modulator", "phase": "PHASE1", "status": "ONGOING", "url": "https://www.firsttracksbio.com/"}
+  ],
+  "literature": [
+    {"title": "Rosnilimab, a Selective and Potent Depleter of Pathogenic T Cells — RA Phase 2B Trial", "venue": "ACR Convergence 2025", "url": "https://acrabstracts.org/abstract/rosnilimab-a-selective-and-potent-depleter-of-pathogenic-t-cells-demonstrates-efficacy-safety-and-translational-proof-of-mechanism-in-a-rheumatoid-arthritis-phase-2b-trial/"},
+    {"title": "Positive Week 12 Results for Rosnilimab in Patients with RA", "venue": "The Rheumatologist", "url": "https://www.the-rheumatologist.org/article/positive-week-12-results-for-rosnilimab-in-patients-with-ra/"},
+    {"title": "Rosnilimab Best-in-Disease Profile Responses for RA", "venue": "HCPLive", "url": "https://www.hcplive.com/view/rosnilimab-historic-responses-rheumatoid-arthritis"},
+    {"title": "Targeting PD-1 in Rheumatoid Arthritis", "venue": "RheumNow", "url": "https://rheumnow.com/news/targeting-pd-1-rheumatoid-arthritis"},
+    {"title": "ANB033 (CD122 antagonist) mechanism & program overview", "venue": "AnaptysBio investor event (2025-10-14)", "url": "https://www.globenewswire.com/news-release/2025/09/29/3158109/0/en/Anaptys-to-Provide-Overview-of-ANB033-a-CD122-antagonist-at-Virtual-Investor-Event-on-Tuesday-Oct-14.html"}
+  ],
+  "errors": {
+    "edgar": ["network policy blocked data.sec.gov in build container"],
+    "ir": ["network policy blocked company domains in build container"],
+    "trials": ["network policy blocked clinicaltrials.gov in build container"],
+    "literature": ["network policy blocked EuropePMC in build container"]
+  }
+}
