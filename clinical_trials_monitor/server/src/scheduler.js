@@ -1,8 +1,9 @@
 const cron = require('node-cron');
 const { checkUpdates } = require('./checker');
 const { checkSponsorUpdates } = require('./sponsor_monitor');
-const { sendSummaryEmail } = require('./mailer');
-const { query, run } = require('./db');
+const { sendSummaryEmail, sendDossierEmail } = require('./mailer');
+const { query, run, getDossier } = require('./db');
+const { refreshAllWatched, defaultSinceIso } = require('./dossier');
 
 async function runMonitoringCycle() {
     console.log('Starting monitoring cycle...');
@@ -79,6 +80,37 @@ async function runMonitoringCycle() {
     console.log('Monitoring cycle complete.');
 }
 
+// Pre-market dossier: pull fresh source data for every watched company,
+// then send each user their personalized HIGH/MED brief.
+async function runDossierCycle() {
+    console.log('Starting dossier cycle...');
+    try {
+        await refreshAllWatched();
+    } catch (err) {
+        console.error('Dossier refresh failed:', err.message);
+    }
+
+    const since = defaultSinceIso();
+    const users = await query('SELECT * FROM users');
+    for (const user of users) {
+        if (!user.email) continue;
+        try {
+            const items = await getDossier(user.id, since);
+            if (items.length === 0) continue;
+            const groups = { HIGH: [], MED: [], LOW: [] };
+            for (const it of items) (groups[it.level] || groups.LOW).push(it);
+            await sendDossierEmail(user.email, {
+                since,
+                counts: { HIGH: groups.HIGH.length, MED: groups.MED.length, LOW: groups.LOW.length },
+                groups
+            });
+        } catch (err) {
+            console.error(`Dossier email failed for ${user.email}:`, err.message);
+        }
+    }
+    console.log('Dossier cycle complete.');
+}
+
 function startScheduler() {
     // Schedule to run hourly from 5am to 10pm ET
     cron.schedule('0 5-22 * * *', async () => {
@@ -87,7 +119,14 @@ function startScheduler() {
         timezone: "America/New_York"
     });
 
-    console.log('Scheduler started: Hourly checks 5am-10pm ET.');
+    // Pre-market biotech dossier: weekdays at 7:00 AM ET
+    cron.schedule('0 7 * * 1-5', async () => {
+        await runDossierCycle();
+    }, {
+        timezone: "America/New_York"
+    });
+
+    console.log('Scheduler started: hourly checks 5am-10pm ET; dossier 7am ET weekdays.');
 }
 
-module.exports = { startScheduler, runMonitoringCycle };
+module.exports = { startScheduler, runMonitoringCycle, runDossierCycle };

@@ -4,6 +4,15 @@ const path = require('path');
 // company_tickers.json snapshot shipped with the repo (no network needed).
 let tickerMap = null;
 
+// SEC titles sometimes carry a trailing state-of-incorporation artifact
+// like "Viridian Therapeutics, Inc.\DE". Strip it for display.
+function cleanName(title) {
+    return String(title || '')
+        .replace(/\\[A-Z]{2}\s*$/i, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
 function loadTickerMap() {
     if (tickerMap) return tickerMap;
     const raw = require(path.join(__dirname, '..', 'sec_tickers.json'));
@@ -16,7 +25,7 @@ function loadTickerMap() {
             ticker,
             cik,
             cikPadded: cik.padStart(10, '0'),
-            name: entry.title
+            name: cleanName(entry.title)
         });
     }
     return tickerMap;

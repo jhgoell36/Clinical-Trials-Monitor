@@ -1,10 +1,13 @@
 const express = require('express');
 const cors = require('cors');
-const { initDb, query, getOne, run, createUser, upsertTrial, upsertSponsor, linkUserTrial, linkUserSponsor } = require('./db');
+const { initDb, query, getOne, run, createUser, upsertTrial, upsertSponsor, linkUserTrial, linkUserSponsor,
+    upsertCompany, linkUserCompany, unlinkUserCompany, getUserCompanies, getDossier } = require('./db');
 const { fetchTrial } = require('./api_client');
 const { checkUpdates } = require('./checker');
 const { startScheduler } = require('./scheduler');
 const { checkSponsorUpdates } = require('./sponsor_monitor');
+const { parseUniverseInput } = require('./universe');
+const { refreshCompany, defaultSinceIso } = require('./dossier');
 const { sendUpdateEmail, sendResetEmail, sendFeedbackEmail } = require('./mailer');
 const { generateToken, hashPassword, comparePassword, authenticateToken } = require('./auth');
 const crypto = require('crypto');
@@ -517,6 +520,82 @@ app.get('/api/sponsors/search', authenticateToken, async (req, res) => {
         } catch (retryError) {
             res.status(500).json({ error: retryError.message });
         }
+    }
+});
+
+// --- Biotech Morning Dossier ---
+
+// List the companies this user watches (with analyst notes).
+app.get('/api/companies', authenticateToken, async (req, res) => {
+    try {
+        const companies = await getUserCompanies(req.user.id);
+        res.json(companies);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Add companies from a free-form paste ("SRPT | core long\nVRTX, BBIO")
+// or a single { ticker, note }. Unresolvable symbols are reported back
+// rather than silently dropped.
+app.post('/api/companies', authenticateToken, async (req, res) => {
+    const { text, ticker, note } = req.body;
+    const input = text || (ticker ? `${ticker}${note ? ' | ' + note : ''}` : '');
+    if (!input) return res.status(400).json({ error: 'Provide tickers (text) or a ticker' });
+
+    const { resolved, unresolved } = parseUniverseInput(input);
+    const added = [];
+    try {
+        for (const c of resolved) {
+            await upsertCompany(c.ticker, c.cik, c.name);
+            await linkUserCompany(req.user.id, c.ticker, c.note);
+            added.push({ ticker: c.ticker, name: c.name, note: c.note || null });
+        }
+        res.json({ added, unresolved });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Stop watching a company.
+app.delete('/api/companies/:ticker', authenticateToken, async (req, res) => {
+    try {
+        await unlinkUserCompany(req.user.id, String(req.params.ticker).toUpperCase());
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// The dossier: this user's watched-company events since `?since=ISO`
+// (default: a 4-day lookback), grouped HIGH / MED / LOW.
+app.get('/api/dossier', authenticateToken, async (req, res) => {
+    try {
+        const since = req.query.since || defaultSinceIso();
+        const items = await getDossier(req.user.id, since);
+        const groups = { HIGH: [], MED: [], LOW: [] };
+        for (const it of items) (groups[it.level] || groups.LOW).push(it);
+        res.json({ since, counts: { HIGH: groups.HIGH.length, MED: groups.MED.length, LOW: groups.LOW.length }, groups });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Pull fresh source data for this user's companies, then return the
+// rebuilt dossier. Synchronous so the UI can show "as of now".
+app.post('/api/dossier/refresh', authenticateToken, async (req, res) => {
+    try {
+        const companies = await getUserCompanies(req.user.id);
+        for (const c of companies) {
+            await refreshCompany(c);
+        }
+        const since = defaultSinceIso();
+        const items = await getDossier(req.user.id, since);
+        const groups = { HIGH: [], MED: [], LOW: [] };
+        for (const it of items) (groups[it.level] || groups.LOW).push(it);
+        res.json({ refreshed: companies.length, since, counts: { HIGH: groups.HIGH.length, MED: groups.MED.length, LOW: groups.LOW.length }, groups });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
 
