@@ -55,10 +55,13 @@ If the analyst is vague on a starred item, ask a focused follow-up rather than g
 
 ### 2. Decide: new skill, or edit existing
 
-Search `.claude/skills/` first. If a close skill exists, improve it instead of duplicating. Three worked, ready-to-run examples already exist and are the best starting points to clone or adapt:
+Search `.claude/skills/` first. If a close skill exists, improve it instead of duplicating. Worked, ready-to-run examples already exist and are the best starting points to clone or adapt:
 - `pubmed-literature-review` — literature / scientific monitoring
 - `financial-model-update` — spreadsheet-model maintenance with sign-off
 - `social-sentiment-check` — social/news sentiment aggregation
+- `research-validator` — correctness audit of an artifact; the QA gate that checks sources, numbers, and statements
+
+Any skill you build that emits a research artifact should name `research-validator` as its recommended QA pass before the output goes to the analyst.
 
 Read the closest example before writing — match its structure.
 
@@ -117,4 +120,4 @@ Tell the analyst: the skill's name, exactly what phrases invoke it, what it prod
 - `templates/SKILL_TEMPLATE.md` — the scaffold to fill in for every new skill.
 - `references/analyst-workflow-patterns.md` — reusable, copy-in building blocks (sourcing, citation, diffing, checkpoints, compliance).
 - `references/skill-authoring-guide.md` — how to write a good SKILL.md (frontmatter, descriptions, progressive disclosure, scripts vs prose).
-- Example skills (siblings in `.claude/skills/`): `pubmed-literature-review`, `financial-model-update`, `social-sentiment-check`.
+- Example skills (siblings in `.claude/skills/`): `pubmed-literature-review`, `financial-model-update`, `social-sentiment-check`, `research-validator`.
