@@ -7,7 +7,9 @@ const { startScheduler } = require('./scheduler');
 const { checkSponsorUpdates } = require('./sponsor_monitor');
 const { sendUpdateEmail, sendResetEmail, sendFeedbackEmail } = require('./mailer');
 const { generateToken, hashPassword, comparePassword, authenticateToken } = require('./auth');
+const dossierRunner = require('./dossier_runner');
 const crypto = require('crypto');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -561,6 +563,63 @@ app.post('/api/test-email', async (req, res) => {
         res.json({ message: 'Test email sent' });
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+});
+
+// --- Company Research Dossier ---
+
+// Start a dossier build for a ticker. Returns a jobId to poll.
+app.post('/api/dossier', authenticateToken, (req, res) => {
+    const { ticker, cik, name, irUrl } = req.body;
+    try {
+        const job = dossierRunner.startJob({ ticker, cik, name, irUrl });
+        res.json({ jobId: job.jobId, ticker: job.ticker, status: job.status });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+// Poll a running dossier job's status and progress stream.
+app.get('/api/dossier/jobs/:jobId', authenticateToken, (req, res) => {
+    const job = dossierRunner.getJob(req.params.jobId);
+    if (!job) return res.status(404).json({ error: 'Job not found' });
+    res.json({
+        jobId: job.jobId,
+        ticker: job.ticker,
+        status: job.status,
+        progress: job.progress,
+        result: job.result,
+        error: job.error,
+        startedAt: job.startedAt,
+        finishedAt: job.finishedAt,
+    });
+});
+
+// Fetch the generated dossier (markdown + manifest + held-file list).
+app.get('/api/dossier/:ticker', authenticateToken, (req, res) => {
+    try {
+        const data = dossierRunner.readDossier(req.params.ticker);
+        if (!data) {
+            return res.status(404).json({ error: 'No dossier found for that ticker yet' });
+        }
+        res.json(data);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+// Download a single held file (path-traversal protected).
+app.get('/api/dossier/:ticker/file', authenticateToken, (req, res) => {
+    const { path: relPath } = req.query;
+    if (!relPath) return res.status(400).json({ error: 'path query param required' });
+    try {
+        const abs = dossierRunner.resolveHeldFile(req.params.ticker, relPath);
+        if (!fs.existsSync(abs) || !fs.statSync(abs).isFile()) {
+            return res.status(404).json({ error: 'File not found' });
+        }
+        res.download(abs, require('path').basename(abs));
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
 });
 

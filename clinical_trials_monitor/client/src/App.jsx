@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import TrialList from './components/TrialList'
 import Settings from './components/Settings'
 import SponsorList from './components/SponsorList'
+import Dossier from './components/Dossier'
 import Login from './components/Login'
 import Register from './components/Register'
 import ForgotPassword from './components/ForgotPassword'
@@ -58,6 +59,15 @@ function Dashboard() {
                   Sponsors
                 </button>
                 <button
+                  onClick={() => setActiveTab('dossier')}
+                  className={`${activeTab === 'dossier'
+                    ? 'border-indigo-500 text-gray-900'
+                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                    } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                >
+                  Dossier
+                </button>
+                <button
                   onClick={() => setActiveTab('settings')}
                   className={`${activeTab === 'settings'
                     ? 'border-indigo-500 text-gray-900'
@@ -84,6 +94,7 @@ function Dashboard() {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {activeTab === 'dashboard' && <TrialList />}
         {activeTab === 'sponsors' && <SponsorList />}
+        {activeTab === 'dossier' && <Dossier />}
         {activeTab === 'settings' && <Settings />}
       </main>
       <FeedbackButton />
