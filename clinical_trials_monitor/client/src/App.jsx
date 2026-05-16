@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import TrialList from './components/TrialList'
 import Settings from './components/Settings'
 import SponsorList from './components/SponsorList'
+import Dossier from './components/Dossier'
 import Login from './components/Login'
 import Register from './components/Register'
 import ForgotPassword from './components/ForgotPassword'
@@ -26,7 +27,7 @@ function RequireAuth({ children }) {
 }
 
 function Dashboard() {
-  const [activeTab, setActiveTab] = useState('dashboard')
+  const [activeTab, setActiveTab] = useState('dossier')
   const { logout, user } = useAuth()
 
   return (
@@ -39,6 +40,15 @@ function Dashboard() {
                 <h1 className="text-xl font-bold text-indigo-600">Clinical Trials Monitor</h1>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                <button
+                  onClick={() => setActiveTab('dossier')}
+                  className={`${activeTab === 'dossier'
+                    ? 'border-indigo-500 text-gray-900'
+                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                    } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                >
+                  Dossier
+                </button>
                 <button
                   onClick={() => setActiveTab('dashboard')}
                   className={`${activeTab === 'dashboard'
@@ -82,6 +92,7 @@ function Dashboard() {
       </nav>
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        {activeTab === 'dossier' && <Dossier />}
         {activeTab === 'dashboard' && <TrialList />}
         {activeTab === 'sponsors' && <SponsorList />}
         {activeTab === 'settings' && <Settings />}
